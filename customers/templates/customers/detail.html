@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}
+فرمایشات
+{% endblock title %}
+
+{% block page_title %}
+ثبت فرمایش جدید برای {{customer.full_name}} 
+{% endblock page_title %}
+
+{% block breadcrumb %}
+<ol class="breadcrumb m-0">
+    <li class="breadcrumb-item"><a href="javascript: void(0);">صفحه اصلی</a></li>
+    <li class="breadcrumb-item"><a href="javascript: void(0);">ثبت مشتری جدید</a></li>
+    <li class="breadcrumb-item active">ثبت فرمایش جدید برای {{customer.full_name}}</li>
+</ol>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="col-lg-2">
+                    <div class="card mini-stats-wid">
+                        <div class="card-body">
+                            <div class="media">
+                                <div class="mini-stat-icon avatar-sm rounded-circle bg-primary align-self-center">
+                                    <span class="avatar-title">
+                                        <strong>۱</strong>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    {{formset.management_form}}
+                    <div id="wrapper">
+                        <div class="row">
+                            {% for form in formset %}
+                                <div class="form-group col-md-2 mb-0">
+                                    {{ form|crispy }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                
+                    <button class="btn btn-light btn-md font-size-18 mx-2">
+                        بعدی
+                        <i class="bx bx-save align-middle font-size-20 mr-1"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    const addMoreBtn = document.getElementById("add-more")
+    const totalNewForms = document.getElementById("id_order_set-TOTAL_FORMS")
+    
+    addMoreBtn.addEventListener("click", add_new_form)
+    function add_new_form(event){
+        if (event) {
+            event.preventDefault()
+        }
+        const currentmyFormsets = document.getElementsByClassName("my_formset")
+        
+        const currentFormCount = currentmyFormsets.length
+        const targetEl = document.getElementById("wrapper")
+        const emptyFormEl = document.getElementById("empty-form").cloneNode(true)
+        emptyFormEl.setAttribute('class', 'my_formset')
+        emptyFormEl.setAttribute('id', `form-${currentFormCount}`)
+        const regex = new RegExp('__prefix__', 'g')
+        emptyFormEl.innerHTML = emptyFormEl.innerHTML.replace(regex, currentFormCount)
+        totalNewForms.setAttribute('value', currentFormCount + 1)
+        targetEl.append(emptyFormEl)
+    }
+</script>
+{% endblock content %}

@@ -1,0 +1,280 @@
+{% extends 'base.html' %}
+
+{% block title %}
+مشتریان
+{% endblock title %}
+
+{% block page_title %}
+ثبت مشتری جدید
+{% endblock page_title %}
+
+{% block breadcrumb %}
+<ol class="breadcrumb m-0">
+    <li class="breadcrumb-item"><a href="javascript: void(0);">صفحه اصلی</a></li>
+    <li class="breadcrumb-item active">ثبت مشتری جدید</li>
+</ol>
+{% endblock breadcrumb %}
+
+{% block content %}
+<!-- customer info modal -->
+<div class="modal fade " id="customer-info" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title mt-0" id="myLargeModalLabel">معلومات مشتری</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'customer-update' customer.pk %}" method="POST">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label for="formrow-firstname-input">نام کامل مشتری</label>
+                                <input type="text" name="customer_name" class="form-control" id="" style="height: 50px;"
+                                    placeholder="نام مشتری را وارد کنید.">
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label for="formrow-firstname-input"> شماره تماس</label>
+                                <input type="text" name="customer_phone" class="form-control" id="" style="height: 50px;"
+                                    placeholder="شماره تماس را وارد کنید.">
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label for="formrow-firstname-input"> آدرس مشتری </label>
+                                <input type="text" name="customer_address" class="form-control" id="formrow-firstname-input"
+                                    style="height: 50px;" placeholder=" آدرس مشتری را وارد کنید.">
+                            </div>
+                        </div>
+                    
+                    </div>
+                    <button class="btn btn-light font-size-18">
+                        ذخیره
+                        <i class="bx bx-save font-size-20 align-middle ml-2"></i>
+                    </button>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<!-- customer info modal end -->
+
+
+<!-- delete customer order and detail start -->
+<div class="modal fade " id="customer-delete" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title mt-0" id="myLargeModalLabel">حذف مشتری</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'customer-delete' customer.pk bill.id %}" method="POST">
+                    {% csrf_token %}
+                    <p class="alert alert-danger text-center">
+                        آیا میخواهید فرمایش مربوط به مشتری "{{customer.full_name}}" ذیل را حذف کنید؟ ریکارد حذف شده قابل بازیابی نیست.
+                    </p>
+                    <button class="btn btn-danger font-size-18">
+                        بلی
+                        <i class="bx bx-save font-size-20 align-middle ml-2"></i>
+                    </button>
+                    <button class="btn btn-light font-size-18" data-dismiss="close" type="button">
+                        نخیر
+                        <i class="fa fa-times font-size-20 align-middle ml-2"></i>
+                    </button>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<!-- delete customer order and detail end -->
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="col-lg-2">
+                    <div class="card mini-stats-wid">
+                        <div class="card-body">
+                            <div class="media">
+                                <div class="mini-stat-icon avatar-sm rounded-circle bg-primary align-self-center">
+                                    <span class="avatar-title">
+                                        <strong>۲</strong>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 border-left">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <h4 class="mb-4">لیست فرمایشات امروز {{customer.full_name}}</h4>
+                            </div>
+                            <div class="col-lg-6">
+                                <h4 class="mb-4 float-right"> {{today}}</h4>
+                            </div>
+                        </div>
+                        <table class="table table-bordered table-sm">
+                            <thead>
+                                <tr>
+                                    <th>نمبر مسلسل</th>
+                                    <th>نوع محصول</th>
+                                    <th>اندازه </th>
+                                    <th>مقدار</th>
+                                    <th>نام برش کار</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders %}
+                                <tr>
+                                    <td>{{forloop.counter}}</td>
+                                    <td>{{order.product.product_name}}</td>
+                                    <td>{{order.length}} &times; {{order.height}} </td>
+                                    <td>{{order.quantity}}</td>
+                                    <td>{{order.service_provider.name}}</td>
+
+                                </tr>
+                                {% empty %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+                        <a href="{% url 'customer-detail' customer.pk %}" class="btn btn-light">
+                            ایجاد فرمایش جدید
+                            <i class="bx bx-plus align-middle ml-2 font-size-18"></i>
+                        </a>
+                        <a 
+                        href="#" class="btn btn-danger"
+                        data-toggle="modal"
+                        data-target="#customer-delete"
+                        >
+                            حذف مورد
+                            <i class="bx bx-trash align-middle ml-2 font-size-18"></i>
+                        </a>
+                        <a 
+                        href="#" class="btn btn-primary"
+                        data-toggle="modal"
+                        data-target="#customer-info"
+                        >
+                            ذخیره در دیتابیس
+                            <i class="bx bx-save align-middle ml-2 font-size-18"></i>
+                        </a>
+                    </div>
+
+                    <div class="col-lg-6 border-right">
+                        <h4 class="mb-2"> قیمت روز را وارد کنید.</h4>
+                        <form action="" method="POST">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-lg-5">
+                                    <div class="form-group">
+                                        <label for="formrow-firstname-input">قیمت روز</label>
+                                        <input type="number" name="price_day" class="form-control" id="" style="height: 50px;" value="{{bill.daily_price}}">
+                                    </div>
+                                </div>
+                                <div class="col-lg-5">
+                                    <div class="form-group">
+                                        <label for="formrow-firstname-input"> فیصدی زایعات</label>
+                                        <input type="number" name="west_percentage" class="form-control" id="" style="height: 50px;" value="{{bill.wasting_percentage}}">
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-5">
+                                    <div class="form-group">
+                                        <label for="formrow-firstname-input"> مقدار پرداخت شده </label>
+                                        <input type="number" name="paid_amount" class="form-control" id="" style="height: 50px;"
+                                            value="{{bill.paid|floatformat:'2'}}">
+                                    </div>
+                                </div>
+                                
+
+                                <div class="col-lg-2">
+                                    <div class="form-group">
+                                        <label for="formrow-firstname-input"> </label>
+                                        <button class="btn btn-light btn-block btn-lg mt-2">
+                                            ذخیره
+                                            <i class="bx bx-save align-middle font-size-20 ml-2"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <hr>
+                        <h5 class="mt-2">
+                            محاسبات
+                        </h5>
+                        <table class="table table-striped">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th>نمبر مسلسل</th>
+                                    <th>اندازه به سانتی متر </th>
+                                    <th> اندازه به فوت</th>
+                                    <th> مجموع فیصدی زایعات</th>
+                                    <th> مقدار  </th>
+                                    <th> قیمت</th>
+                                    <th>مجموع کل</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                {% for calc in calculations %}
+                                    <tr>
+                                        <td>{{forloop.counter}}</td>
+                                        <td dir="ltr">{{calc.size_cm|floatformat:"2"}} cm <sup>2</sup> </td>
+                                        <td dir="ltr">{{calc.size_ft|floatformat:"2"}} foot <sup>2</sup> </td>
+                                        <td dir="ltr">{{calc.total_of_percentage|floatformat:"2"}}</td>
+                                        
+                                        <td>{{calc.quantity}}</td>
+                                        <td>{{calc.d_price}}</td>
+                                        <td>{{calc.total_price|floatformat:"3"}}</td>
+                                    </tr>
+                                {% endfor %}
+                                <tfoot class="bg-light">
+                                    <tr>
+                                        <td colspan="2" class="font-size-18">
+                                            مجموع کل 
+                                        </td>
+                                        <td class="font-size-18">{{total|floatformat:"3"}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" class="font-size-18">
+                                             مقدار پرداخت شده
+                                        </td>
+                                        <td class="font-size-18">{{paid_amount|floatformat:"3"}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" class="font-size-18">
+                                            مقدار باقی مانده
+                                        </td>
+                                        <td class="font-size-18">{{remind_amount|floatformat:"3"}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" class="font-size-18">
+                                            مجموع کلی فوت
+                                        </td>
+                                        <td class="font-size-18">{{foot_total_amount|floatformat:"3"}}</td>
+                                    </tr>
+                                    
+                                </tfoot>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}
